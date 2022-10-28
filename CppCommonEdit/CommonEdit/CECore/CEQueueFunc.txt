@@ -1,0 +1,105 @@
+CEQueueFunc用法说明：
+
+======
+写在前面：在编写CEQueueFunc伊始，我们希望它作为一个函数队列管理器出现，但随着开发的进行，
+我们发现它更多的特征可能是基于文本的函数访问及管理，因此在命名相关宏的时候我们用的是名称DynamicFunc而非QueueFunc
+======
+
+1.启用功能
+若想使用动态函数管理队列，需要在类的创建中添加CE宏关键字 enableCEDynamicFunc
+例如：
+class YourClass :public OtherClass , enableCEDynamicFunc
+class YourClass :enableCEDynamicFunc
+并且在类的花括号内立即使用CE宏关键字 CE_DYNAMIC
+
+现在，您的类已经支持使用CE动态函数管理队列。
+动态函数管理队列使用了来自Qt的特性，必须与Qt一并使用。
+使用上述方法创建的类，也会同时成为QObject的派生类，并且已经应用Qt宏关键字Q_OBJECT
+可以正常在类内定义Qt信号或槽，以及应用其他QObject功能
+
+2.定义CEDF函数
+只有CEDF函数才能使用动态函数管理队列，一般函数不受支持。
+定义一般函数应当形如： 返回值类型 函数名(参数){函数体}
+定义CEDF函数应当形如： CEDF_def(函数名){函数体}
+CEDF函数的返回类型和参数类型由CE统一管理。
+具体而言，参数类型只有两个，即一个QStringList和一个QList<void*>，分别用于存放一般参数和指针参数
+在该函数内，使用对象名CEDF_NormalList,CEDF_PointerList来分别访问这两个列表。
+
+返回值是一个结构体，结构体第一项是一个枚举值，告诉管理队列如何处理刚执行完的这个函数，
+例如不变参重新执行，用返回值覆盖参数后重新执行，用返回值覆盖参数后执行下一项，直接执行下一项，从队列中除名等
+结构体第二项和第三项是QStringList和QList<void*>，分别用于存放一般返回值和指针返回值。
+
+对于CEDF而言，返回值的唯一作用就是上文提到的覆盖队列内对于该函数的参数值，
+例如，若参数的QStringList在入列时设置了文本“30”，
+则可以在返回的QStringList内将该文本改为“29”，那么队列在下次遍历的时候，参数的QStringList内的文本就是“29”。
+
+CE宏关键字提供快速返回写法。例如，当该函数无返回值时，可以
+CE_Return CEDF_ReturnVOID
+
+当该函数需要复写自己的调用参数时，可以
+CE_Return CEDF_ReturnEDIT
+值得一提的是，此宏返回的QStringList和QList<void*>即函数调用时的两个参数，也就是说，若想使用该宏，
+应当在CEDF函数内应该直接操作两个参数列表，或者在操作结束后将结果同步到两个参数列表。
+
+当该函数需要立即重新执行时，可以 CE_Return CEDF_ReturnREDO
+
+当该函数需要在复写调用参数后立即重新执行时，可以 CE_Return CEDF_ReturnCYCLE
+注意事项同CEDF_ReturnEDIT
+
+当该函数需要从队列中除名时，可以 CE_Return CEDF_ReturnREMOVE
+该函数会在当前队列遍历完成后从队列中除名。除名时仅除名当前调用计划，并不会同时除名所有具有此函数名的函数调用计划。
+
+3.添加函数调用计划到队列
+使用CE宏函数addCEDF(函数名称,QStringList,QList<void*>)即可添加一个函数和它的调用参数到队列。
+请注意，该宏函数会返回一个CEDynamicFunctionID值，即一个long long值，该值是该函数在队列内的唯一值。
+当需要在CEDF函数之外进行函数调用计划删除时需要该值。
+
+此外，若一个函数不需要QStringList或QList<void*>内有任何值（即传统的void），那么可以用CE宏关键字 CEDF_BothVOID
+QStringList或QList<void*>中为空的也可以用CE宏关键字 CEDF_VOID声明
+例如：
+addCEDF(FUNC1,{"20"},CEDF_VOID);
+addCEDF(FUNC1,CEDF_BothVOID);
+
+
+4.将一个调用计划从队列中删除
+使用CE宏函数removeCEDF(CEDynamicFunctionID)，可以把一个调用计划从队列中移除
+
+5.重现函数判断
+由于CE并未准备任何预编译机制，因此需要您自己重现函数判断器，队列会使用该函数判断器来调用相应函数
+您首先需要用CE宏关键字声明一个“判断槽”，即：
+CEDF_slots{槽体}
+在槽体内，您应当使用一个CE宏函数
+ifIsCEDF(FuncName);
+FuncName是被您入列的CEDF函数的名称，您应当用该函数遍历所有被您入列的CEDF函数的名称
+
+例如，若您曾经
+addCEDF(FUNC1,CEDF_BothVOID);
+addCEDF(FUNC2,CEDF_BothVOID);
+
+那么您的判断槽全部内容应该如下：
+
+CEDF_slots{
+	ifIsCEDF(FUNC1);
+	ifIsCEDF(FUNC2);
+}
+
+6.执行计划
+使用函数doCEDynamicFunc();可以遍历执行一次函数执行计划
+使用函数doCEDynamicFuncFirst();可以仅执行函数计划队列的第一个计划
+使用函数doCEDynamicFuncWith(CEDynamicFunctionID);可以执行具有指定ID的计划
+
+上述三个函数均为Qt槽函数
+
+7.特性
+由于CE并未准备任何预编译机制，因此CE无法像Qt的信号与槽那样提供严格的类型检查机制。
+本动态函数管理队列也是依托了C++的能够使用花括号做一些初始化操作的新特性。
+因此CEDF参数的类型完全由您自行保证，CEDF的判断槽是否完整也由您自行保证。
+除非您确定您已经熟悉了CEQueueFunc.h内相关代码的原理并悉知类型漏洞与运行风险，否则建议不要使用该机制。
+
+8.转换到Qt槽函数
+众所周知，由于Qt槽函数要求函数返回类型为void，与CEDF函数实际上返回的CE::CEQueueReturnInfo并不一致，因此
+CE提供宏函数CEDF_toQtSlot(CEDFName,newName)，可以将对应的CEDF函数生成为一个返回值为void且函数名为newName的版本。
+但是请注意，重载之后的Qt槽函数的调用参数与原CEDF函数一样，为QStringList和QList<void*>。
+
+9.得知计划执行情况
+当队列被清空时，类内的public对象CEDynamicFuncQueue会发送一个Qt信号，信号名称为queueIsEmptied();

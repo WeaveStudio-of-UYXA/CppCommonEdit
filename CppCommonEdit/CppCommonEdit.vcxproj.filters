@@ -22,4 +22,88 @@
       <Extensions>ts</Extensions>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CommonEdit\CECore\CEBaseType.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CommonEdit\CECore\CEObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CommonEdit\CommonEdit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonEdit\CEContainer\CEContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonEdit\CEContainer\CEList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonEdit\CECore\CE_QtMacro.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonEdit\CECore\CEBaseType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonEdit\CECore\CECore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonEdit\CECore\CEEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonEdit\CECore\CEFollow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonEdit\CECore\CEMacro.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonEdit\CECore\CEMain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonEdit\CECore\CEObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonEdit\CECore\CEPointer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonEdit\CEFunction\CEFiles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonEdit\CEFunction\CEFunction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonEdit\CEFunction\CEOperate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonEdit\CEFunction\CEScripts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonEdit\CEScience\CESciConstant.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonEdit\CEWidgets\CEWidgets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="CommonEdit\CECore\CEQueueFunc - 副本.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="CommonEdit\CECore\CEQueueFunc.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="CommonEdit\CEFunction\CELanguage.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="CommonEdit\CEFunction\CESettings.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="CommonEdit\CEWidgets\CEMultiButton.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+  </ItemGroup>
 </Project>
