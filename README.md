@@ -1,4 +1,4 @@
-# CommonEdit - 共同编辑
+# CommonEdit 共同编辑 CCE
 
 亿绪组织通用开发库CommonEdit for C++
 
